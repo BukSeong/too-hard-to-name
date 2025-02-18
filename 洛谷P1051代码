@@ -1,0 +1,89 @@
+#include <iostream>
+#include <vector>
+#include <string>
+
+using namespace std;
+
+class Student{
+
+private:
+	string name;
+	int ave; // Final average grade
+	int eval; // Class evaluation grade
+	bool cadre;
+	bool west;
+	int paper;
+	int scholarship;
+
+public:
+	Student(const string &n,int a,int e,char c,char w,int p){
+		name=n;ave=a;eval=e;
+		cadre=ConvertToBool(c);
+		west=ConvertToBool(w);
+		paper=p;
+		scholarship=setScholarship();
+	}
+	bool ConvertToBool(char c){
+		if (c=='Y') return true;
+		if (c=='N') return false;
+	}
+	int setScholarship(){
+		int res=0;
+		// Academician Scholarship
+		if (ave>80 && paper>=1) res+=8000;
+		// May 4th Scholarship
+		if (ave>85 && eval>80) res+=4000;
+		// Outstanding Grade
+		if (ave>90) res+=2000;
+		// West Scholarship
+		if (ave>85 && west) res+=1000;
+		// Class contribution
+		if (eval>80 && cadre) res+=850;
+		return res;
+	}
+	bool operator>(const Student &ano){
+		if (this->scholarship > ano.scholarship) return true;
+		else return false;
+	}
+	int operator+(int x){
+		return this->scholarship+x;
+	}
+	string getName() const{
+		return name;
+	}
+	int getScholarship() const{
+		return scholarship;
+	}
+	
+	friend ostream& operator<<(ostream &os,const Student &student);
+	
+};
+
+ostream& operator<<(ostream &os,const Student& student){
+	os<<student.getName()<<'\n'<<student.getScholarship();
+	return os;
+}
+
+void findmax(vector<Student> &v){
+	Student *ptr=&v[0];
+	for (int i=1;i<v.size();++i){
+		if (v[i]>*ptr) ptr=&v[i];
+	}
+	cout<<*ptr<<endl;
+	return;
+}
+
+int main(){
+	int num,sum=0;
+	cin>>num;
+	vector<Student> v;
+	for (int i=0;i<num;++i){
+		string n;int a;int e;char c;char w;int p;
+		cin>>n>>a>>e>>c>>w>>p;
+		v.emplace_back(n,a,e,c,w,p);
+		sum=v[i]+sum;
+	}
+	findmax(v);
+	cout<<sum<<endl;
+	return 0;
+}
